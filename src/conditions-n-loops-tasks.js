@@ -124,15 +124,20 @@ function isIsoscelesTriangle(a, b, c) {
  */
 function convertToRomanNumerals(num) {
   let sum = '';
-  const roundedValueX = Math.round(num / 10);
-  const roundValueV = Math.round((num % 10) / 5) >= 0;
+  const roundedValueX = Math.floor(num / 10);
+  const roundValueV = Math.floor((num % 10) / 5) === 1;
+  const roundValueIX = num % 10 === 9;
   const roundValueIV = num % 5 === 4;
   const roundValueIII = num % 5 === 3;
   const roundValueII = num % 5 === 2;
   const roundValueI = num % 5 === 1;
 
-  if (roundedValueX) {
-    sum += 'X'.repeat(roundedValueX);
+  for (let i = 0; i < roundedValueX; i += 1) {
+    sum += 'X';
+  }
+  if (roundValueIX) {
+    sum += 'IX';
+    return sum;
   }
   if (roundValueV) {
     sum += 'V';
@@ -167,10 +172,58 @@ function convertToRomanNumerals(num) {
  *  '10,5'    => 'one zero point five'
  *  '1950.2'  => 'one nine five zero point two'
  */
-function convertNumberToString(/* numberStr */) {
-  throw new Error('Not implemented');
+function convertNumberToString(numberStr) {
+  let sum = '';
+  for (let i = 0; i < numberStr.length; i += 1) {
+    switch (numberStr[i]) {
+      case '-':
+        sum += 'minus';
+        break;
+      case '1':
+        sum += 'one';
+        break;
+      case '2':
+        sum += 'two';
+        break;
+      case '3':
+        sum += 'three';
+        break;
+      case '4':
+        sum += 'four';
+        break;
+      case '5':
+        sum += 'five';
+        break;
+      case '6':
+        sum += 'six';
+        break;
+      case '7':
+        sum += 'seven';
+        break;
+      case '8':
+        sum += 'eight';
+        break;
+      case '9':
+        sum += 'nine';
+        break;
+      case '0':
+        sum += 'zero';
+        break;
+      case '.':
+        sum += 'point';
+        break;
+      case ',':
+        sum += 'point';
+        break;
+      default:
+        break;
+    }
+    if (i !== numberStr.length - 1) {
+      sum = `${sum} `;
+    }
+  }
+  return sum;
 }
-
 /**
  * Determines whether a string is a palindrome.
  * In this task, the use of methods of the String and Array classes is not allowed.
@@ -183,8 +236,13 @@ function convertNumberToString(/* numberStr */) {
  *  '0123210'   => true
  *  'qweqwe'    => false
  */
-function isPalindrome(/* str */) {
-  throw new Error('Not implemented');
+function isPalindrome(str) {
+  for (let i = 0; i < Math.floor(str.length / 2); i += 1) {
+    if (str[i] !== str[str.length - 1 - i]) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /**
@@ -201,8 +259,13 @@ function isPalindrome(/* str */) {
  *  'qwerty', 'Q'     => -1
  *  'qwerty', 'p'     => -1
  */
-function getIndexOf(/* str, letter */) {
-  throw new Error('Not implemented');
+function getIndexOf(str, letter) {
+  for (let i = 0; i < str.length; i += 1) {
+    if (str[i] === letter) {
+      return i;
+    }
+  }
+  return -1;
 }
 
 /**
@@ -220,8 +283,16 @@ function getIndexOf(/* str, letter */) {
  *  12345, 0    => false
  *  12345, 6    => false
  */
-function isContainNumber(/* num, digit */) {
-  throw new Error('Not implemented');
+function isContainNumber(num, digit) {
+  let positiveNum = num;
+  while (positiveNum > 0) {
+    const currentDigit = positiveNum % 10;
+    if (currentDigit === digit) {
+      return true;
+    }
+    positiveNum = (positiveNum - currentDigit) / 10;
+  }
+  return false;
 }
 
 /**
@@ -237,8 +308,21 @@ function isContainNumber(/* num, digit */) {
  *  [2, 3, 9, 5] => 2       => 2 + 3 === 5 then balance element is 9 and its index = 2
  *  [1, 2, 3, 4, 5] => -1   => no balance element
  */
-function getBalanceIndex(/* arr */) {
-  throw new Error('Not implemented');
+function getBalanceIndex(arr) {
+  for (let i = 0; i < arr.length; i += 1) {
+    let leftSum = 0;
+    let rightSum = 0;
+    for (let j = 0; j < i; j += 1) {
+      leftSum += arr[j];
+    }
+    for (let k = i + 1; k < arr.length; k += 1) {
+      rightSum += arr[k];
+    }
+    if (leftSum === rightSum) {
+      return i;
+    }
+  }
+  return -1;
 }
 
 /**
@@ -262,8 +346,44 @@ function getBalanceIndex(/* arr */) {
  *          [10, 9,  8,  7]
  *        ]
  */
-function getSpiralMatrix(/* size */) {
-  throw new Error('Not implemented');
+function getSpiralMatrix(size) {
+  const matrix = [];
+  for (let i = 0; i < size; i += 1) {
+    const row = [];
+    for (let j = 0; j < i; j += 1) {
+      row[j] = 0;
+    }
+    matrix[i] = row;
+  }
+  let currentNumber = 1;
+  let top = 0;
+  let bottom = size - 1;
+  let left = 0;
+  let right = size - 1;
+
+  while (top <= bottom && left <= size) {
+    for (let j = left; j <= right; j += 1) {
+      matrix[top][j] = currentNumber;
+      currentNumber += 1;
+    }
+    top += 1;
+    for (let k = top; k <= bottom; k += 1) {
+      matrix[k][right] = currentNumber;
+      currentNumber += 1;
+    }
+    right -= 1;
+    for (let g = right; g >= left; g -= 1) {
+      matrix[bottom][g] = currentNumber;
+      currentNumber += 1;
+    }
+    bottom -= 1;
+    for (let l = bottom; l >= top; l -= 1) {
+      matrix[l][left] = currentNumber;
+      currentNumber += 1;
+    }
+    left += 1;
+  }
+  return matrix;
 }
 
 /**
@@ -281,8 +401,25 @@ function getSpiralMatrix(/* size */) {
  *    [7, 8, 9]         [9, 6, 3]
  *  ]                 ]
  */
-function rotateMatrix(/* matrix */) {
-  throw new Error('Not implemented');
+function rotateMatrix(matrix) {
+  const size = matrix.length;
+  const resultMatrix = matrix;
+  const tempResult = [];
+  for (let i = 0; i < size; i += 1) {
+    const row = [];
+    tempResult[i] = row;
+  }
+  for (let i = 0; i < size; i += 1) {
+    for (let j = 0; j < size; j += 1) {
+      tempResult[i][j] = matrix[size - 1 - j][i];
+    }
+  }
+  for (let i = 0; i < size; i += 1) {
+    for (let j = 0; j < size; j += 1) {
+      resultMatrix[i][j] = tempResult[i][j];
+    }
+  }
+  return matrix;
 }
 
 /**
@@ -299,8 +436,22 @@ function rotateMatrix(/* matrix */) {
  *  [2, 9, 5, 9]    => [2, 5, 9, 9]
  *  [-2, 9, 5, -3]  => [-3, -2, 5, 9]
  */
-function sortByAsc(/* arr */) {
-  throw new Error('Not implemented');
+function sortByAsc(arr) {
+  const size = arr.length;
+  const temp = arr;
+  let swapped;
+  do {
+    swapped = false;
+    for (let i = 0; i < size - 1; i += 1) {
+      if (temp[i] > temp[i + 1]) {
+        const tempArr = arr[i];
+        temp[i] = arr[i + 1];
+        temp[i + 1] = tempArr;
+        swapped = true;
+      }
+    }
+  } while (swapped);
+  return arr;
 }
 
 /**
